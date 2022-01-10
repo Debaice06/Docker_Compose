@@ -1,0 +1,26 @@
+docker volume create mysql-data
+docker network create test
+
+
+docker run -d \
+     --network test --network-alias pathshala \
+     -v mysql-data:/var/lib/mysql \
+     -e MYSQL_ROOT_PASSWORD=123456 \
+     -e MYSQL_DATABASE=TestDB \
+     mysql:5.7
+	 
+
+docker run -d -p 3000:3000 \
+   -w /app -v /root/practice/app:/app \
+   --network test \
+   -e MYSQL_HOST=pathshala \
+   -e MYSQL_USER=root \
+   -e MYSQL_PASSWORD=123456 \
+   -e MYSQL_DB=TestDB \
+   node:12-alpine \
+   sh -c "yarn install && yarn run dev"
+   
+
+dig pathshala
+pathshala.              600     IN      A       172.23.0.2
+
